@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map For Switch
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Switch	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+poll	KEYWORD2
+switched	KEYWORD2
+on	KEYWORD2
+pushed	KEYWORD2
+released	KEYWORD2
+longPress	KEYWORD2
+doubleClick	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
