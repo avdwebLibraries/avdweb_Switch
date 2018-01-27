@@ -14,7 +14,7 @@ HISTORY:
 1.0.1   22-5-2013 Added longPress, doubleClick 
 1.0.2   1-12-2015 added process(input)
 1.0.3   15-1-2016 added deglitching
-1.0.4   25-1-2017 file renamed to avdweb_Switch
+1.0.5   25-1-2017 file renamed to avdweb_Switch
 
 ..........................................DEGLITCHING..............................
                                           
