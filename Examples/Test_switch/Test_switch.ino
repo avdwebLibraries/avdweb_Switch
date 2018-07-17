@@ -2,7 +2,7 @@
 #include <Streaming.h> // https://github.com/kachok/arduino-libraries/blob/master/Streaming/Streaming.h
 #include "avdweb_Switch.h"
  
-const byte toggleSwitchpin = 3; 
+const byte toggleSwitchpin = 13; 
 const byte buttonGNDpin = 4; 
 const byte ButtonVCCpin = 2; 
 const byte Button10mspin = 12; 
