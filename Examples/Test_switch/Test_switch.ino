@@ -1,5 +1,4 @@
 #include "Arduino.h"
-#include <Streaming.h> // https://github.com/kachok/arduino-libraries/blob/master/Streaming/Streaming.h
 #include "avdweb_Switch.h"
  
 const byte toggleSwitchpin = 3; 
