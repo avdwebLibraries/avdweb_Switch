@@ -4,8 +4,8 @@
  
 const byte toggleSwitchpin = 3; 
 const byte buttonGNDpin = 4; 
-const byte ButtonVCCpin = 6; 
-const byte Button10mspin = 8; 
+const byte ButtonVCCpin = 2; 
+const byte Button10mspin = 12; 
 int i;
  
 Switch buttonGND = Switch(buttonGNDpin); // button to GND, use internal 20K pullup resistor
