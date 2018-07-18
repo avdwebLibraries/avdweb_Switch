@@ -102,6 +102,7 @@ bool Switch::process()
   debounce();
   calcDoubleClick();
   calcLongPress();
+  triggerCallbacks();
   return _switched;	
 }
 
@@ -170,5 +171,44 @@ bool Switch::doubleClick()
 { return _doubleClick;
 } 
 
+void Switch::triggerCallbacks()
+{
+  if(_pushedCallback && pushed())
+  { _pushedCallback(_pushedCallbackParam);
+  }
+    else if(_releasedCallback && released())
+  { _releasedCallback(_releasedCallbackParam);
+  }
 
+  if(_longPressCallback && longPress())
+  { _longPressCallback(_longPressCallbackParam);
+  }
 
+  if(_doubleClickCallback && doubleClick())
+  { _doubleClickCallback(_doubleClickCallbackParam);
+  }
+}
+
+void Switch::setPushedCallback(switchCallback_t cb, void* param)
+{ /// Store the "pushed" callback function
+  _pushedCallback = cb;
+  _pushedCallbackParam = param;
+}
+
+void Switch::setReleasedCallback(switchCallback_t cb, void* param)
+{ /// Store the "released" callback function
+  _releasedCallback = cb;
+  _releasedCallbackParam = param;
+}
+
+void Switch::setLongPressCallback(switchCallback_t cb, void* param)
+{ /// Store the "long press" callback function
+  _longPressCallback = cb;
+  _longPressCallbackParam = param;
+}
+
+void Switch::setDoubleClickCallback(switchCallback_t cb, void* param)
+{ /// Store the "double click" callback function
+  _doubleClickCallback = cb;
+  _doubleClickCallbackParam = param;
+}
