@@ -1,5 +1,4 @@
 #include "Arduino.h"
-#include <Streaming.h> // https://github.com/kachok/arduino-libraries/blob/master/Streaming/Streaming.h
 #include "avdweb_Switch.h"
  
 const byte toggleSwitchpin = 3; 
@@ -19,13 +18,13 @@ void setup()
  
 void loop() 
 { buttonGND.poll();  
-  if(buttonGND.switched()) Serial << "switched ";   
-  if(buttonGND.pushed()) Serial << "pushed " << ++i << " ";
-  if(buttonGND.released()) Serial << "released\n";
-  
-  if(toggleSwitch.poll()) Serial << toggleSwitch.on() << endl; 
-  if(toggleSwitch.longPress()) Serial << "longPress1 ";
-  if(toggleSwitch.longPress()) Serial << "longPress2\n";
-  if(toggleSwitch.doubleClick()) Serial << "doubleClick1 ";
-  if(toggleSwitch.doubleClick()) Serial << "doubleClick2\n";
+  if(buttonGND.switched()) Serial.print("switched ");
+  if(buttonGND.pushed()) {Serial.print("pushed "); Serial.print(++i); Serial.print(" ");}
+  if(buttonGND.released()) Serial.println("released");
+
+  if(toggleSwitch.poll()) Serial.println(toggleSwitch.on());
+  if(toggleSwitch.longPress()) Serial.print("longPress1 ");
+  if(toggleSwitch.longPress()) Serial.println("longPress2");
+  if(toggleSwitch.doubleClick()) Serial.print("doubleClick1 ");
+  if(toggleSwitch.doubleClick()) Serial.println("doubleClick2");
 }
