@@ -13,6 +13,8 @@ WEBSITE: http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debounc
 #ifndef AVDWEB_SWITCH_H
 #define AVDWEB_SWITCH_H
 
+typedef void (*switchCallback_t)(void*);
+
 class Switch
 {
 public:	
@@ -25,20 +27,37 @@ public:
   bool longPress(); // will be refreshed by poll()
   bool doubleClick(); // will be refreshed by poll()
 
+  // Set methods for event callbacks
+  void setPushedCallback(switchCallback_t cb, void* param = nullptr);
+  void setReleasedCallback(switchCallback_t cb, void* param = nullptr);
+  void setLongPressCallback(switchCallback_t cb, void* param = nullptr);
+  void setDoubleClickCallback(switchCallback_t cb, void* param = nullptr);
+
   protected: 
   bool process(); // not inline, used in child class
   void inline deglitch();
   void inline debounce();
   void inline calcDoubleClick();
   void inline calcLongPress();
+  void triggerCallbacks();
 
   unsigned long deglitchTime, switchedTime, pushedTime, ms;
   const byte pin; 
   const int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
   const bool polarity;
   bool input, lastInput, equal, deglitched, debounced, _switched, _longPress, longPressDisable, _doubleClick; 
+
+  // Event callbacks
+  switchCallback_t _pushedCallback = nullptr;
+  switchCallback_t _releasedCallback = nullptr;
+  switchCallback_t _longPressCallback = nullptr;
+  switchCallback_t _doubleClickCallback = nullptr;
+
+  void* _pushedCallbackParam = nullptr;
+  void* _releasedCallbackParam = nullptr;
+  void* _longPressCallbackParam = nullptr;
+  void* _doubleClickCallbackParam = nullptr;
+
 };
 
 #endif
-
-
