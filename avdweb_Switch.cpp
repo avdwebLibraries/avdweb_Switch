@@ -11,7 +11,7 @@ WEBSITE: http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debounc
 
 HISTORY:
 1.0.0   20-4-2013 _debouncePeriod=50
-1.0.1   22-5-2013 Added longPress, doubleClick 
+1.0.1   22-5-2013 Added longPress, doubleClick
 1.0.2   1-12-2015 added process(input)
 1.0.3   15-1-2016 added deglitching
 1.0.5   25-1-2017 file renamed to avdweb_Switch
@@ -84,21 +84,21 @@ HISTORY:
 
 #include "Arduino.h"
 #include "avdweb_Switch.h"
-              
-Switch::Switch(byte _pin, byte PinMode, bool polarity, int debouncePeriod, int longPressPeriod, int doubleClickPeriod, int deglitchPeriod): 
-pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod), longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod) 
-{ pinMode(pin, PinMode); 
+
+Switch::Switch(byte _pin, byte PinMode, bool polarity, int debouncePeriod, int longPressPeriod, int doubleClickPeriod, int deglitchPeriod):
+pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod), longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod)
+{ pinMode(pin, PinMode);
   switchedTime = millis();
   debounced = digitalRead(pin);
 }
- 
+
 bool Switch::poll()
 { input = digitalRead(pin);
   return process();
-} 
+}
 
 bool Switch::process()
-{ deglitch(); 
+{ deglitch();
   debounce();
   calcDoubleClick();
   calcLongPress();
@@ -114,20 +114,20 @@ void inline Switch::deglitch()
     deglitchTime = ms;
   }
   if(equal & ((ms - deglitchTime) > deglitchPeriod)) // max 50ms, disable deglitch: 0ms
-  { deglitched = input; 
+  { deglitched = input;
     deglitchTime = ms;
   }
-  lastInput = input;  
+  lastInput = input;
 }
 
 void inline Switch::debounce()
 { ms = millis();
   _switched = 0;
-  if((deglitched != debounced) & ((ms - switchedTime) >= debouncePeriod)) 
+  if((deglitched != debounced) & ((ms - switchedTime) >= debouncePeriod))
   { switchedTime = ms;
     debounced = deglitched;
     _switched = 1;
-    longPressDisable = false; 
+    longPressDisable = false;
   }
 }
 
@@ -135,16 +135,16 @@ void inline Switch::calcDoubleClick()
 { _doubleClick = false;
   if(pushed())
   { _doubleClick = (ms - pushedTime) < doubleClickPeriod; // pushedTime of previous push
-    pushedTime = ms; 
-  } 
+    pushedTime = ms;
+  }
 }
 
 void inline Switch::calcLongPress()
 { _longPress = false;
   if(!longPressDisable)
   { _longPress = on() && ((ms - pushedTime) > longPressPeriod); // true just one time between polls
-    longPressDisable = _longPress; // will be reset at next switch   
-  }  
+    longPressDisable = _longPress; // will be reset at next switch
+  }
 }
 
 bool Switch::switched()
@@ -155,21 +155,21 @@ bool Switch::on()
 { return !(debounced^polarity);
 }
 
-bool Switch::pushed() 
-{ return _switched && !(debounced^polarity); 
-} 
+bool Switch::pushed()
+{ return _switched && !(debounced^polarity);
+}
 
-bool Switch::released() 
-{ return _switched && (debounced^polarity); 
-} 
+bool Switch::released()
+{ return _switched && (debounced^polarity);
+}
 
-bool Switch::longPress() 
+bool Switch::longPress()
 { return _longPress;
-} 
+}
 
-bool Switch::doubleClick() 
+bool Switch::doubleClick()
 { return _doubleClick;
-} 
+}
 
 void Switch::triggerCallbacks()
 {
