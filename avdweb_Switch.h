@@ -26,37 +26,42 @@ public:
   bool released(); // will be refreshed by poll()
   bool longPress(); // will be refreshed by poll()
   bool doubleClick(); // will be refreshed by poll()
+  bool singleClick(); // will be refreshed by poll()
 
   // Set methods for event callbacks
   void setPushedCallback(switchCallback_t cb, void* param = nullptr);
   void setReleasedCallback(switchCallback_t cb, void* param = nullptr);
   void setLongPressCallback(switchCallback_t cb, void* param = nullptr);
   void setDoubleClickCallback(switchCallback_t cb, void* param = nullptr);
+  void setSingleClickCallback(switchCallback_t cb, void* param = nullptr);
 
   protected:
   bool process(); // not inline, used in child class
   void inline deglitch();
   void inline debounce();
-  void inline calcDoubleClick();
   void inline calcLongPress();
+  void inline calcDoubleClick();
+  void inline calcSingleClick();
   void triggerCallbacks();
 
-  unsigned long deglitchTime, switchedTime, pushedTime, ms;
+  unsigned long deglitchTime, switchedTime, pushedTime, releasedTime, ms;
   const byte pin;
   const int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
   const bool polarity;
-  bool input, lastInput, equal, deglitched, debounced, _switched, _longPress, longPressDisable, _doubleClick;
+  bool input, lastInput, equal, deglitched, debounced, _switched, _longPress, longPressDisable, _doubleClick, _singleClick, singleClickDisable;
 
   // Event callbacks
   switchCallback_t _pushedCallback = nullptr;
   switchCallback_t _releasedCallback = nullptr;
   switchCallback_t _longPressCallback = nullptr;
   switchCallback_t _doubleClickCallback = nullptr;
+  switchCallback_t _singleClickCallback = nullptr;
 
   void* _pushedCallbackParam = nullptr;
   void* _releasedCallbackParam = nullptr;
   void* _longPressCallbackParam = nullptr;
   void* _doubleClickCallbackParam = nullptr;
+  void* _singleClickCallbackParam = nullptr;
 
 };
 

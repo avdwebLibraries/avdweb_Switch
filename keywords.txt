@@ -19,6 +19,12 @@ pushed	KEYWORD2
 released	KEYWORD2
 longPress	KEYWORD2
 doubleClick	KEYWORD2
+singleClick	KEYWORD2
+setPushedCallback	KEYWORD2
+setReleasedCallback	KEYWORD2
+setLongPressCallback	KEYWORD2
+setDoubleClickCallback	KEYWORD2
+setSingleClickCallback	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)

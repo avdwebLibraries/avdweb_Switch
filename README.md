@@ -8,7 +8,7 @@ Available at: https://github.com/avandalen/avdweb_Switch
 #### General features of the Switch library
 - Performs not just de-bouncing, but also de-glitching against EMC pulses.
 - External pull-up resistors are not required.
-- Supports also long press and double click detection.
+- Supports also long press, double click, and single click detection.
 - Callback functions.
 
 ## Introduction
@@ -52,7 +52,7 @@ It returns "true" if the pin voltage agrees with the one defined by `polarity` (
 
 #### pushed()
 
-It returns "true" if a button was pushed (switched towards the on position). Use only for push buttons. Note that this is in fact "single-click".
+It returns "true" if a button was pushed (switched towards the on position). Use only for push buttons. Note that this provides instant response and can be used as "single-click" if "double-click" and "long-press" are not watched events. "Pushed" occurs simultaneously with "double-click" and "long-press".
 
 #### released()
 
@@ -67,6 +67,11 @@ It returns "true" if a push button is pressed longer than 300ms (by default). No
 It returns "true" if a push button is double clicked within 250ms (by default). Note that a doubleClick() always will be preceded by pushed() from the first push.
 
 The anteceding pushed() event can't be avoided, because to restrict the pushed() function to single clicks it would have to wait for a possible second click, which would introduce an annoying delay. So, the action on doubleClick() has to undo the previous action on pushed().
+
+#### singleClick()
+
+It returns "true" if a push button is clicked once and the requirements for doubleClick and longPress are not met. The event thus occur several miliseconds after the actual push, because it depends on the other events not happening after the push. Use this if three different interactions are needed in combination with doubleClick and longPress. Note that a singleClick() always will be preceded by pushed(). Use pushed() instead if immediate response is required and there is no interest in monitoring doubleClick and longPress.
+
 
 #### Example
 
@@ -104,7 +109,7 @@ void setup() {
 }
 ``` 
 
-The available callback setting functions are `setPushedCallback()`, `setReleasedCallback()`, `setLongPressCallback()`, and `setDoubleClickCallback()` which allow defining the functions that will be called on such events. If using a toggle switch and not a push button, the "pushed" event will be of interest when the switch is turned on, and "released" when it is turned off.
+The available callback setting functions are `setPushedCallback()`, `setReleasedCallback()`, `setLongPressCallback()`, `setDoubleClickCallback()`, and `setSingleClickCallback()` which allow defining the functions that will be called on such events. If using a toggle switch and not a push button, the "pushed" event will be of interest when the switch is turned on, and "released" when it is turned off.
 
 If the conditions for more than one event occur simultaneously and there are callback functions registered for them, they will be executed in the order of the functions above.
 
@@ -169,6 +174,10 @@ A long-press generates first a pushed event and after 300ms (by default) the lon
 
 The same happens with doubleClick, which also generates two pushed() events. When doubleClick is used, ignore the second pushed() result or don't call pushed(). When doubleClick is not needed, simply don't call doubleClick().
 
+#### Combining singleClick, doubleClick, and longPress events
+
+If these three events must be used toghether the best strategy is to stick to their get functions and avoid using pushed().
+
 ## Hardware considerations
 
 #### Connecting switches to the microcontroler
@@ -222,68 +231,89 @@ Several discrete signals (updated at poll times) are created. The raw signal is 
 
 ```	
 ..........................................DEGLITCHING..............................
-                                          
+
                         ________________   _
-               on      |                | | |    _                         
-                       |                | | |   | |                                       
-                       |                |_| |___| |__                                                            
- analog        off_____|_____________________________|____________________________   
-                  
+               on      |                | | |    _
+                       |                | | |   | |
+                       |                |_| |___| |__
+ analog        off_____|_____________________________|____________________________
+
                         ________________   _     _
- input            _____|                |_| |___| |_______________________________                
-           
- poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^    
+ input            _____|                |_| |___| |_______________________________
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
 
  equal           0 1 1 0 1 1 1 1 1 1 1 1 0 0 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 
  deglitchPeriod          <--------><--   <--     <-  <--------><--------><--------
                                     ___________________________
- deglitched       _________________|                           |__________________ 
+ deglitched       _________________|                           |__________________
 
  deglitchTime            ^         ^     ^       ^   ^         ^        ^
 
  ..........................................DEBOUNCING.............................
 
- debouncePeriod                    <-------------------------------->     
+ debouncePeriod                    <-------------------------------->
                                     _________________________________
- debounced        _________________|                                 |____________   
+ debounced        _________________|                                 |____________
                                     _                                 _
- _switched        _________________| |_______________________________| |__________        
-                                                    
- switchedTime                      ^                                 ^  
- 
+ _switched        _________________| |_______________________________| |__________
+
+ switchedTime                      ^                                 ^
+
 
 **********************************************************************************
 ........................................DOUBLE CLICK..............................
-                                        
-                           __________         ______                            
- debounced        ________|          |_______|      |_____________________________   
 
- poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^           
+                           __________         ______
+ debounced        ________|          |_______|      |_____________________________
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
                            _                  _
- pushed          _________| |________________| |__________________________________        
-                                                    
- pushedTime               ^                  ^  
+ pushed          _________| |________________| |__________________________________
 
- doubleClickPeriod         <------------------------------------->                      
+ pushedTime               ^                  ^
+                                      _              _
+ released        ____________________| |____________| |___________________________
+
+ releasedTime                        ^              ^
+
+ doubleClickPeriod         <------------------------------------->
                                               _
  _doubleClick     ___________________________| |__________________________________
 
-                            
-........................................LONG PRESS................................
-                                         
-                           ___________________________                                      
- debounced        ________|                           |___________________________         
 
- poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^              
-        
- longPressPeriod            <--------------->          
+........................................LONG PRESS................................
+
+                           ___________________________
+ debounced        ________|                           |___________________________
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+
+ longPressPeriod            <--------------->
                             _                           _
- _switched        _________| |_________________________| |________________________        
+ _switched        _________| |_________________________| |________________________
                                               __________
- longPressDisable ___________________________|          |_________________________                                   
+ longPressDisable ___________________________|          |_________________________
                                               _
- _longPress       ___________________________| |__________________________________         
+ _longPress       ___________________________| |__________________________________
+
+
+........................................SINGLE CLICK..............................
+
+                           __________                                 ______
+ debounced        ________|          |_______________________________|      |_____
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+
+ longPressPeriod           <--------------->
+ doubleClickPeriod         <------------------------------------->
+                            _         _                               _      _
+ _switched        _________| |_______| |_____________________________| |____| |___
+                                                                  _____
+ singleClickDisable______________________________________________|     |__________
+                                                                  _
+ _singleClick     _______________________________________________| |______________
 ```
 
 ### Additional information

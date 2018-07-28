@@ -10,77 +10,99 @@ AUTHOR: Albert van Dalen
 WEBSITE: http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debouncer.html
 
 HISTORY:
-1.0.0   20-04-2013 _debouncePeriod=50
-1.0.1   22-05-2013 Added longPress, doubleClick
-1.0.2   01-12-2015 added process(input)
-1.0.3   15-01-2016 added deglitching
-1.0.5   25-01-2017 file renamed to avdweb_Switch
-1.1.0   28-07-2018 added callbacks (code by Sean Lanigan, added by Martin Laclaustra)
+1.0.0    20-04-2013 _debouncePeriod=50
+1.0.1    22-05-2013 Added longPress, doubleClick
+1.0.2    01-12-2015 added process(input)
+1.0.3    15-01-2016 added deglitching
+1.0.5    25-01-2017 file renamed to avdweb_Switch
+1.1.0    28-07-2018 added callbacks (code by Sean Lanigan, added by Martin Laclaustra)
+1.2.0-rc 28-07-2017 added singleclick. Reorganize, keeping variables for each event in one function
 
 ..........................................DEGLITCHING..............................
-                                          
+
                         ________________   _
-               on      |                | | |    _                         
-                       |                | | |   | |                                       
-                       |                |_| |___| |__                                                            
- analog        off_____|_____________________________|____________________________   
-                  
+               on      |                | | |    _
+                       |                | | |   | |
+                       |                |_| |___| |__
+ analog        off_____|_____________________________|____________________________
+
                         ________________   _     _
- input            _____|                |_| |___| |_______________________________                
-           
- poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^    
+ input            _____|                |_| |___| |_______________________________
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
 
  equal           0 1 1 0 1 1 1 1 1 1 1 1 0 0 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 
  deglitchPeriod          <--------><--   <--     <-  <--------><--------><--------
                                     ___________________________
- deglitched       _________________|                           |__________________ 
+ deglitched       _________________|                           |__________________
 
  deglitchTime            ^         ^     ^       ^   ^         ^        ^
 
  ..........................................DEBOUNCING.............................
 
- debouncePeriod                    <-------------------------------->     
+ debouncePeriod                    <-------------------------------->
                                     _________________________________
- debounced        _________________|                                 |____________   
+ debounced        _________________|                                 |____________
                                     _                                 _
- _switched        _________________| |_______________________________| |__________        
-                                                    
- switchedTime                      ^                                 ^  
- 
+ _switched        _________________| |_______________________________| |__________
+
+ switchedTime                      ^                                 ^
+
 
 **********************************************************************************
 ........................................DOUBLE CLICK..............................
-                                        
-                           __________         ______                            
- debounced        ________|          |_______|      |_____________________________   
 
- poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^           
+                           __________         ______
+ debounced        ________|          |_______|      |_____________________________
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
                            _                  _
- pushed          _________| |________________| |__________________________________        
-                                                    
- pushedTime               ^                  ^  
+ pushed          _________| |________________| |__________________________________
 
- doubleClickPeriod         <------------------------------------->                      
+ pushedTime               ^                  ^
+                                      _              _
+ released        ____________________| |____________| |___________________________
+
+ releasedTime                        ^              ^
+
+ doubleClickPeriod         <------------------------------------->
                                               _
  _doubleClick     ___________________________| |__________________________________
 
-                            
-........................................LONG PRESS................................
-                                         
-                           ___________________________                                      
- debounced        ________|                           |___________________________         
 
- poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^              
-        
- longPressPeriod            <--------------->          
+........................................LONG PRESS................................
+
+                           ___________________________
+ debounced        ________|                           |___________________________
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+
+ longPressPeriod            <--------------->
                             _                           _
- _switched        _________| |_________________________| |________________________        
+ _switched        _________| |_________________________| |________________________
                                               __________
- longPressDisable ___________________________|          |_________________________                                   
+ longPressDisable ___________________________|          |_________________________
                                               _
- _longPress       ___________________________| |__________________________________         
- 
+ _longPress       ___________________________| |__________________________________
+
+
+........................................SINGLE CLICK..............................
+
+                           __________                                 ______
+ debounced        ________|          |_______________________________|      |_____
+
+ poll            ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+
+ longPressPeriod           <--------------->
+ doubleClickPeriod         <------------------------------------->
+                            _         _                               _      _
+ _switched        _________| |_______| |_____________________________| |____| |___
+                                                                  _____
+ singleClickDisable______________________________________________|     |__________
+                                                                  _
+ _singleClick     _______________________________________________| |______________
+
 */
 
 #include "Arduino.h"
@@ -91,30 +113,40 @@ pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(de
 { pinMode(pin, PinMode);
   switchedTime = millis();
   debounced = digitalRead(pin);
+  singleClickDisable = true;
 }
 
 bool Switch::poll()
 { input = digitalRead(pin);
+  ms = millis();
   return process();
 }
 
 bool Switch::process()
 { deglitch();
   debounce();
+  calcSingleClick();
   calcDoubleClick();
   calcLongPress();
+  if(switched())
+  { switchedTime = ms; //stores last times for future rounds
+    if(pushed())
+    { pushedTime = ms;
+    } else { releasedTime = ms;
+    }
+  }
   triggerCallbacks();
-  return _switched;	
+  return _switched;
 }
 
 void inline Switch::deglitch()
-{ ms = millis();
+{
   if(input == lastInput) equal = 1;
   else
   { equal = 0;
     deglitchTime = ms;
   }
-  if(equal & ((ms - deglitchTime) > deglitchPeriod)) // max 50ms, disable deglitch: 0ms
+  if(equal && ((ms - deglitchTime) > deglitchPeriod)) // max 50ms, disable deglitch: 0ms
   { deglitched = input;
     deglitchTime = ms;
   }
@@ -122,29 +154,38 @@ void inline Switch::deglitch()
 }
 
 void inline Switch::debounce()
-{ ms = millis();
+{
   _switched = 0;
-  if((deglitched != debounced) & ((ms - switchedTime) >= debouncePeriod))
-  { switchedTime = ms;
-    debounced = deglitched;
+  if((deglitched != debounced) && ((ms - switchedTime) > debouncePeriod))
+  { debounced = deglitched;
     _switched = 1;
-    longPressDisable = false;
+  }
+}
+
+void inline Switch::calcSingleClick()
+{ _singleClick = false;
+  if(pushed())
+  { if((ms - pushedTime) >= doubleClickPeriod)
+    { singleClickDisable = false; //resets when pushed not in second click of doubleclick
+    } else { singleClickDisable = true; //silence single click in second cl. doublecl.
+    }
+  }
+  if(!singleClickDisable)
+  { _singleClick = !switched() && !on() && ((releasedTime - pushedTime) <= longPressPeriod) && ((ms - pushedTime) >= doubleClickPeriod); // true just one time between polls
+    singleClickDisable = _singleClick; // will be reset at next push
   }
 }
 
 void inline Switch::calcDoubleClick()
-{ _doubleClick = false;
-  if(pushed())
-  { _doubleClick = (ms - pushedTime) < doubleClickPeriod; // pushedTime of previous push
-    pushedTime = ms;
-  }
+{ _doubleClick = pushed() && ((ms - pushedTime) < doubleClickPeriod);
 }
 
 void inline Switch::calcLongPress()
 { _longPress = false;
+  if(released()) longPressDisable = false; //resets when released
   if(!longPressDisable)
-  { _longPress = on() && ((ms - pushedTime) > longPressPeriod); // true just one time between polls
-    longPressDisable = _longPress; // will be reset at next switch
+  { _longPress = !switched() && on() && ((ms - pushedTime) > longPressPeriod); // true just one time between polls
+    longPressDisable = _longPress; // will be reset at next release
   }
 }
 
@@ -172,6 +213,10 @@ bool Switch::doubleClick()
 { return _doubleClick;
 }
 
+bool Switch::singleClick()
+{ return _singleClick;
+}
+
 void Switch::triggerCallbacks()
 {
   if(_pushedCallback && pushed())
@@ -187,6 +232,10 @@ void Switch::triggerCallbacks()
 
   if(_doubleClickCallback && doubleClick())
   { _doubleClickCallback(_doubleClickCallbackParam);
+  }
+
+  if(_singleClickCallback && singleClick())
+  { _singleClickCallback(_singleClickCallbackParam);
   }
 }
 
@@ -212,4 +261,10 @@ void Switch::setDoubleClickCallback(switchCallback_t cb, void* param)
 { /// Store the "double click" callback function
   _doubleClickCallback = cb;
   _doubleClickCallbackParam = param;
+}
+
+void Switch::setSingleClickCallback(switchCallback_t cb, void* param)
+{ /// Store the "double click" callback function
+  _singleClickCallback = cb;
+  _singleClickCallbackParam = param;
 }
