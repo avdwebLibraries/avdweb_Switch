@@ -10,11 +10,12 @@ AUTHOR: Albert van Dalen
 WEBSITE: http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debouncer.html
 
 HISTORY:
-1.0.0   20-4-2013 _debouncePeriod=50
-1.0.1   22-5-2013 Added longPress, doubleClick
-1.0.2   1-12-2015 added process(input)
-1.0.3   15-1-2016 added deglitching
-1.0.5   25-1-2017 file renamed to avdweb_Switch
+1.0.0   20-04-2013 _debouncePeriod=50
+1.0.1   22-05-2013 Added longPress, doubleClick
+1.0.2   01-12-2015 added process(input)
+1.0.3   15-01-2016 added deglitching
+1.0.5   25-01-2017 file renamed to avdweb_Switch
+1.1.0   28-07-2018 added callbacks (code by Sean Lanigan, added by Martin Laclaustra)
 
 ..........................................DEGLITCHING..............................
                                           
