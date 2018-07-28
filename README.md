@@ -3,7 +3,7 @@
 ## About
 Arduino library for debouncing switches and buttons. Supports detecting longPress and doubleClick. Supports defining callback functions.
 
-Available at: https://github.com/avandalen/Switch
+Available at: https://github.com/avandalen/avdweb_Switch
 
 #### General features of the Switch library
 - Performs not just de-bouncing, but also de-glitching against EMC pulses.
@@ -128,7 +128,7 @@ For Arduino see here how to use an ISR for polling the buttons:
 
 ```C++
 #include <Arduino.h>
-#include "Switch.h"
+#include "avdweb_Switch.h"
 #include <FrequencyTimer2.h>
 
 Switch speedUpBtn(1);
