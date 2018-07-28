@@ -292,6 +292,7 @@ See also: [A Guide To Debouncing](http://www.eng.utah.edu/~cs5780/debouncing.pdf
 
 ### Licenses
 ####Library
+
 [![GNU License](https://www.gnu.org/graphics/gplv3-88x31.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 Copyright (C) 2012  Albert van Dalen
@@ -300,6 +301,7 @@ http://www.avdweb.nl
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 ####Documents
+
 [![bt-nc-sa](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/3.0/)
 
 This document is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-nc-sa/3.0/).
