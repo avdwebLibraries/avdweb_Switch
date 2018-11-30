@@ -16,7 +16,9 @@ HISTORY:
 1.0.3    15-01-2016 added deglitching
 1.0.5    25-01-2017 file renamed to avdweb_Switch
 1.1.0    28-07-2018 added callbacks (code by Sean Lanigan, added by Martin Laclaustra)
-1.2.0-rc 28-07-2017 added singleclick. Reorganize, keeping variables for each event in one function
+1.2.0-rc 28-07-2018 added singleclick. Reorganize, keeping variables for each event in one function
+1.2.0    29-09-2018 released
+1.2.1    30-11-2018 bugfix. Initialize time variables in the constructor. Fixes false event if first call to poll was delayed
 
 ..........................................DEGLITCHING..............................
 
@@ -114,6 +116,7 @@ pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(de
   switchedTime = millis();
   debounced = digitalRead(pin);
   singleClickDisable = true;
+  poll();
 }
 
 bool Switch::poll()
