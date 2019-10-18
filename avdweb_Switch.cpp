@@ -138,7 +138,7 @@ bool Switch::process()
   if(switched())
   { switchedTime = ms; //stores last times for future rounds
     if(pushed())
-    { _beepStaticCallback(_beepStaticCallbackParam); 
+    { if(_beepStaticCallback) _beepStaticCallback(_beepStaticCallbackParam);
       pushedTime = ms;
     } else { releasedTime = ms;
     }
