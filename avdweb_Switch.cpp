@@ -19,7 +19,7 @@ HISTORY:
 1.2.0-rc 28-07-2018 added singleclick. Reorganize, keeping variables for each event in one function
 1.2.0    29-09-2018 released
 1.2.1    30-11-2018 bugfix. Initialize time variables in the constructor. Fixes false event if first call to poll was delayed
-1.2.2    18-10-2019 beep when a switch is pressed with using a setBeepStaticCallback function
+1.2.2    18-10-2019 beep when a switch is pressed with using a setBeepAllCallback function
 
 ..........................................DEGLITCHING..............................
 
@@ -111,8 +111,8 @@ HISTORY:
 #include "Arduino.h"
 #include "avdweb_Switch.h"
 
-switchCallback_t Switch::_beepStaticCallback; // without = 
-void* Switch::_beepStaticCallbackParam; // without = 
+switchCallback_t Switch::_beepAllCallback; // without = 
+void* Switch::_beepAllCallbackParam; // without = 
 
 Switch::Switch(byte _pin, byte PinMode, bool polarity, int debouncePeriod, int longPressPeriod, int doubleClickPeriod, int deglitchPeriod):
 pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod), longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod)
@@ -138,7 +138,7 @@ bool Switch::process()
   if(switched())
   { switchedTime = ms; //stores last times for future rounds
     if(pushed())
-    { if(_beepStaticCallback) _beepStaticCallback(_beepStaticCallbackParam);
+    { if(_beepAllCallback) _beepAllCallback(_beepAllCallbackParam);
       pushedTime = ms;
     } else { releasedTime = ms;
     }
@@ -277,8 +277,8 @@ void Switch::setSingleClickCallback(switchCallback_t cb, void* param)
   _singleClickCallbackParam = param;
 }
 
-void Switch::setBeepStaticCallback(switchCallback_t cb, void* param) 
+void Switch::setBeepAllCallback(switchCallback_t cb, void* param) 
 { /// Store the "beep" callback function
-  _beepStaticCallback = cb;
-  _beepStaticCallbackParam = param;
+  _beepAllCallback = cb;
+  _beepAllCallbackParam = param;
 }

@@ -34,7 +34,7 @@ public:
   void setLongPressCallback(switchCallback_t cb, void* param = nullptr);
   void setDoubleClickCallback(switchCallback_t cb, void* param = nullptr);
   void setSingleClickCallback(switchCallback_t cb, void* param = nullptr);
-  void setBeepStaticCallback(switchCallback_t cb, void* param = nullptr); 
+  void setBeepAllCallback(switchCallback_t cb, void* param = nullptr); 
 
   protected:
   bool process(); // not inline, used in child class
@@ -57,13 +57,14 @@ public:
   switchCallback_t _longPressCallback = nullptr;
   switchCallback_t _doubleClickCallback = nullptr;
   switchCallback_t _singleClickCallback = nullptr;
-  static switchCallback_t _beepStaticCallback = nullptr; // static function pointer (works only with typedef?) can be used by all objects
-
+  static switchCallback_t _beepAllCallback = nullptr; // static function pointer, can be used by all objects
+  // static void *_beepAllCallback(void*); doesnt work without typedef
+  
   void* _pushedCallbackParam = nullptr;
   void* _releasedCallbackParam = nullptr;
   void* _longPressCallbackParam = nullptr;
   void* _doubleClickCallbackParam = nullptr;
   void* _singleClickCallbackParam = nullptr;
-  static void* _beepStaticCallbackParam = nullptr; // can be used by all objects
+  static void* _beepAllCallbackParam = nullptr; // can be used by all objects
 };
 #endif
