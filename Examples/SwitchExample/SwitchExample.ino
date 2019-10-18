@@ -16,7 +16,7 @@ Switch alleventsButton = Switch(alleventsButtonpin);
 // Switch pushButtonVCC = Switch(pushButtonpin, INPUT, HIGH); // button to VCC, 10k pull-down resistor, no internal pull-up resistor, HIGH polarity
 // Switch pushButton1ms = Switch(pushButtonpin, INPUT_PULLUP, LOW, 1); // debounceTime 1ms
 
-void beepCallbackFunction(void* s)
+void beepCallbackFunction(void* s) // optional
 { tone(3, 2400, 5); // is non-blocking 
   //Serial.print("BeepCallback: "); Serial.println((char*)s);
 }
