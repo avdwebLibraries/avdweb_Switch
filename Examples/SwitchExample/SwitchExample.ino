@@ -23,7 +23,7 @@ void beepCallbackFunction(void* s)
 
 void setup()
 { Serial.begin(9600);
-  toggleSwitch.setBeepStaticCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one object because of static 
+  toggleSwitch.setBeepStaticCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one switch because of static 
 }
 
 void loop()
