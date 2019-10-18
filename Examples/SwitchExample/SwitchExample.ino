@@ -1,12 +1,13 @@
 #include "Arduino.h"
 #include "avdweb_Switch.h"
 
-const byte pushButtonpin = 2;
-const byte toggleSwitchpin = 4;
-const byte multiresponseButtonpin = 12;
-const byte alleventsButtonpin = 13;
-int i;
+const byte pushButtonpin = 10; // downButton 
+const byte toggleSwitchpin = 9; // upButton
+const byte multiresponseButtonpin = 8; // selectButton
+const byte alleventsButtonpin = 7; // weldButton
+const byte buzzerPin = 3; // for beep when a switch is pressed
 
+int i;
 Switch pushButton = Switch(pushButtonpin); // button to GND, use internal 20K pullup resistor
 Switch toggleSwitch = Switch(toggleSwitchpin);
 Switch multiresponseButton = Switch(multiresponseButtonpin);
@@ -15,8 +16,14 @@ Switch alleventsButton = Switch(alleventsButtonpin);
 // Switch pushButtonVCC = Switch(pushButtonpin, INPUT, HIGH); // button to VCC, 10k pull-down resistor, no internal pull-up resistor, HIGH polarity
 // Switch pushButton1ms = Switch(pushButtonpin, INPUT_PULLUP, LOW, 1); // debounceTime 1ms
 
+void beepCallbackFunction(void* s)
+{ tone(3, 2400, 5); // is non-blocking 
+  //Serial.print("BeepCallback: "); Serial.println((char*)s);
+}
+
 void setup()
 { Serial.begin(9600);
+  toggleSwitch.setBeepStaticCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one object because of static 
 }
 
 void loop()
