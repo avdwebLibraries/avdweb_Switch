@@ -1,8 +1,8 @@
 #include "Arduino.h"
 #include "avdweb_Switch.h"
 
-const byte toggleSwitchpin = 4;
-const byte multiresponseButtonpin = 12;
+const byte toggleSwitchpin = 10;
+const byte multiresponseButtonpin = 9;
 
 Switch toggleSwitch = Switch(toggleSwitchpin);
 Switch multiresponseButton = Switch(multiresponseButtonpin);
