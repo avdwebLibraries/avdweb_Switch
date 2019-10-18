@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "avdweb_Switch.h"
+#include "avdweb_Switch.h" 
 
 const byte pushButtonpin = 10; // downButton 
 const byte toggleSwitchpin = 9; // upButton
@@ -23,7 +23,7 @@ void beepCallbackFunction(void* s) // optional
 
 void setup()
 { Serial.begin(9600);
-  toggleSwitch.setBeepStaticCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one switch because of static 
+  toggleSwitch.setBeepAllCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one switch because of static 
 }
 
 void loop()
