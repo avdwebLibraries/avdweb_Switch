@@ -19,6 +19,7 @@ HISTORY:
 1.2.0-rc 28-07-2018 added singleclick. Reorganize, keeping variables for each event in one function
 1.2.0    29-09-2018 released
 1.2.1    30-11-2018 bugfix. Initialize time variables in the constructor. Fixes false event if first call to poll was delayed
+1.2.2    18-10-2019 beep when a switch is pressed with using a setBeepStaticCallback function
 
 ..........................................DEGLITCHING..............................
 
@@ -110,6 +111,9 @@ HISTORY:
 #include "Arduino.h"
 #include "avdweb_Switch.h"
 
+switchCallback_t Switch::_beepStaticCallback; // without = 
+void* Switch::_beepStaticCallbackParam; // without = 
+
 Switch::Switch(byte _pin, byte PinMode, bool polarity, int debouncePeriod, int longPressPeriod, int doubleClickPeriod, int deglitchPeriod):
 pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod), longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod)
 { pinMode(pin, PinMode);
@@ -134,7 +138,8 @@ bool Switch::process()
   if(switched())
   { switchedTime = ms; //stores last times for future rounds
     if(pushed())
-    { pushedTime = ms;
+    { _beepStaticCallback(_beepStaticCallbackParam); 
+      pushedTime = ms;
     } else { releasedTime = ms;
     }
   }
@@ -262,7 +267,7 @@ void Switch::setLongPressCallback(switchCallback_t cb, void* param)
 
 void Switch::setDoubleClickCallback(switchCallback_t cb, void* param)
 { /// Store the "double click" callback function
-  _doubleClickCallback = cb;
+  //_doubleClickCallback = cb;
   _doubleClickCallbackParam = param;
 }
 
@@ -270,4 +275,10 @@ void Switch::setSingleClickCallback(switchCallback_t cb, void* param)
 { /// Store the "double click" callback function
   _singleClickCallback = cb;
   _singleClickCallbackParam = param;
+}
+
+void Switch::setBeepStaticCallback(switchCallback_t cb, void* param) 
+{ /// Store the "beep" callback function
+  _beepStaticCallback = cb;
+  _beepStaticCallbackParam = param;
 }

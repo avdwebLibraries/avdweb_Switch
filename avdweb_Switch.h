@@ -13,7 +13,7 @@ WEBSITE: http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debounc
 #ifndef AVDWEB_SWITCH_H
 #define AVDWEB_SWITCH_H
 
-typedef void (*switchCallback_t)(void*);
+typedef void (*switchCallback_t)(void*); 
 
 class Switch
 {
@@ -34,6 +34,7 @@ public:
   void setLongPressCallback(switchCallback_t cb, void* param = nullptr);
   void setDoubleClickCallback(switchCallback_t cb, void* param = nullptr);
   void setSingleClickCallback(switchCallback_t cb, void* param = nullptr);
+  void setBeepStaticCallback(switchCallback_t cb, void* param = nullptr); 
 
   protected:
   bool process(); // not inline, used in child class
@@ -56,13 +57,13 @@ public:
   switchCallback_t _longPressCallback = nullptr;
   switchCallback_t _doubleClickCallback = nullptr;
   switchCallback_t _singleClickCallback = nullptr;
+  static switchCallback_t _beepStaticCallback = nullptr; // can be used by all objects
 
   void* _pushedCallbackParam = nullptr;
   void* _releasedCallbackParam = nullptr;
   void* _longPressCallbackParam = nullptr;
   void* _doubleClickCallbackParam = nullptr;
   void* _singleClickCallbackParam = nullptr;
-
+  static void* _beepStaticCallbackParam = nullptr; // can be used by all objects
 };
-
 #endif
