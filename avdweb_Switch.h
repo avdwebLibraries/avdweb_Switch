@@ -58,7 +58,7 @@ public:
   switchCallback_t _doubleClickCallback = nullptr;
   switchCallback_t _singleClickCallback = nullptr;
   static switchCallback_t _beepAllCallback = nullptr; // static function pointer, can be used by all objects
-  // static void *_beepAllCallback(void*); doesnt work without typedef
+  //static void(*_beepAllCallback)(void*) = nullptr; // static function pointer without typedef
   
   void* _pushedCallbackParam = nullptr;
   void* _releasedCallbackParam = nullptr;
