@@ -19,7 +19,7 @@ Available at: https://github.com/avandalen/avdweb_Switch
 ## Introduction
 Switches and push buttons need debouncing. It is straightforward to do this with software, using this library.
 
-For a complete description see: http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debouncer.html
+For a complete description see: https://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debouncer
 
 ## Using the Switch library
 
