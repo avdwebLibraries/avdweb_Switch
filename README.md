@@ -1,7 +1,5 @@
 # Switch library
-
-There are 2 other libs distracted, who has time to check the differences and combine all libs to one again?
-https://github.com/blackketter/Switch
+There is another lib distracted, who has time to check the differences and combine both libs to one again?
 
 https://github.com/Martin-Laclaustra/avdweb_Switch
 
