@@ -47,8 +47,8 @@ public:
 
   unsigned long deglitchTime, switchedTime, pushedTime, releasedTime, ms;
   const byte pin;
-  const int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
   const bool polarity;
+  const int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
   bool input, lastInput, equal, deglitched, debounced, _switched, _longPress, longPressDisable, _doubleClick, _singleClick, singleClickDisable;
 
   // Event callbacks
