@@ -1,10 +1,6 @@
-# Switch library
-There is another lib distracted, who has time to check the differences and combine both libs to one again?
-
-https://github.com/Martin-Laclaustra/avdweb_Switch
-
 ## About
-Arduino library for debouncing switches and buttons. Supports detecting longPress and doubleClick. Supports defining callback functions.
+Arduino switch and button library with Short/Long Press, Double Click and Beep.
+Supports detecting longPress and doubleClick. Supports defining callback functions.
 
 Available at: https://github.com/avandalen/avdweb_Switch
 
