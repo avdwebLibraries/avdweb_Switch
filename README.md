@@ -2,8 +2,6 @@
 Arduino switch and button library with Short/Long Press, Double Click and Beep.
 Supports detecting longPress and doubleClick. Supports defining callback functions.
 
-Available at: https://github.com/avandalen/avdweb_Switch
-
 #### General features of the Switch library
 - Performs not just de-bouncing, but also de-glitching against EMC pulses.
 - External pull-up resistors are not required.
