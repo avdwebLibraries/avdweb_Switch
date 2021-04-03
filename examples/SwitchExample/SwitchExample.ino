@@ -3,7 +3,7 @@
 
 const byte pushButtonpin = 10; // downButton 
 const byte toggleSwitchpin = 9; // upButton
-const byte multiresponseButtonpin = 8; // selectButton
+const byte multiresponseButtonpin = 4; // selectButton
 const byte alleventsButtonpin = 7; // weldButton
 const byte buzzerPin = 3; // for beep when a switch is pressed
 
@@ -22,8 +22,9 @@ void beepCallbackFunction(void* s) // optional
 }
 
 void setup()
-{ Serial.begin(9600);
-  toggleSwitch.setBeepAllCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one switch because of static 
+{ Serial.begin(115200);
+  toggleSwitch.setBeepAllCallback(&beepCallbackFunction/*, "Beep done"*/); // needed only for one switch because of static
+  // multiresponseButton.doubleClickPeriod=0; disable doubleClick()
 }
 
 void loop()
