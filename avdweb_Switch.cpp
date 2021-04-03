@@ -20,6 +20,7 @@ HISTORY:
 1.2.0    29-09-2018 released
 1.2.1    30-11-2018 bugfix. Initialize time variables in the constructor. Fixes false event if first call to poll was delayed
 1.2.2    18-10-2019 beep when a switch is pressed with using a setBeepAllCallback function
+1.2.3    03-04-2020 made public: deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod
 
 ..........................................DEGLITCHING..............................
 

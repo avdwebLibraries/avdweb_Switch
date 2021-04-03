@@ -36,6 +36,8 @@ public:
   void setSingleClickCallback(switchCallback_t cb, void* param = nullptr);
   void setBeepAllCallback(switchCallback_t cb, void* param = nullptr); 
 
+  int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
+
   protected:
   bool process(); // not inline, used in child class
   void inline deglitch();
@@ -47,7 +49,6 @@ public:
 
   unsigned long deglitchTime, switchedTime, pushedTime, releasedTime, ms;
   const byte pin;
-  const int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
   const bool polarity;
   bool input, lastInput, equal, deglitched, debounced, _switched, _longPress, longPressDisable, _doubleClick, _singleClick, singleClickDisable;
 
