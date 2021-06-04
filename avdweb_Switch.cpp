@@ -112,12 +112,11 @@ HISTORY:
 #include "Arduino.h"
 #include "avdweb_Switch.h"
 
-switchCallback_t Switch::_beepAllCallback; // definition static function pointer with typedef
-//void (*Switch::_beepAllCallback)(void*); // definition static function pointer without typedef
-void* Switch::_beepAllCallbackParam; // without = 
+switchCallback_t Switch::_beepAllCallback = nullptr; // definition static function pointer with typedef
+void* Switch::_beepAllCallbackParam = nullptr;
 
-Switch::Switch(byte _pin, byte PinMode, bool polarity, int debouncePeriod, int longPressPeriod, int doubleClickPeriod, int deglitchPeriod):
-pin(_pin), polarity(polarity), deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod), longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod)
+Switch::Switch(byte _pin, byte PinMode, bool polarity, unsigned long debouncePeriod, unsigned long longPressPeriod, unsigned long doubleClickPeriod, unsigned long deglitchPeriod):
+deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod), longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod), pin(_pin), polarity(polarity)
 { pinMode(pin, PinMode);
   switchedTime = millis();
   debounced = digitalRead(pin);
