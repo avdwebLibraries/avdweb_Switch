@@ -58,7 +58,9 @@ public:
   switchCallback_t _longPressCallback = nullptr;
   switchCallback_t _doubleClickCallback = nullptr;
   switchCallback_t _singleClickCallback = nullptr;
-  static switchCallback_t _beepAllCallback; // static function pointer, can be used by all objects
+  static switchCallback_t _beepAllCallback; // static function pointer, can be used by all objects 
+  //static switchCallback_t _beepAllCallback = nullptr; // gives error with SAMD21
+  //static void(*_beepAllCallback)(void*) = nullptr; // static function pointer without typedef
   
   void* _pushedCallbackParam = nullptr;
   void* _releasedCallbackParam = nullptr;
@@ -66,5 +68,6 @@ public:
   void* _doubleClickCallbackParam = nullptr;
   void* _singleClickCallbackParam = nullptr;
   static void* _beepAllCallbackParam; // can be used by all objects
+  //static void* _beepAllCallbackParam = nullptr; // gives error with SAMD21
 };
 #endif
