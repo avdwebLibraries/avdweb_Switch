@@ -18,7 +18,7 @@ typedef void (*switchCallback_t)(void*);
 class Switch
 {
 public:	
-  Switch(byte _pin, byte PinMode=INPUT_PULLUP, bool polarity=LOW, int debouncePeriod=50, int longPressPeriod=300, int doubleClickPeriod=250, int deglitchPeriod=10);
+  Switch(byte _pin, byte PinMode=INPUT_PULLUP, bool polarity=LOW, unsigned long debouncePeriod=50, unsigned long longPressPeriod=300, unsigned long doubleClickPeriod=250, unsigned long deglitchPeriod=10);
   bool poll(); // Returns 1 if switched
   bool switched(); // will be refreshed by poll()
   bool on();
@@ -36,7 +36,7 @@ public:
   void setSingleClickCallback(switchCallback_t cb, void* param = nullptr);
   void setBeepAllCallback(switchCallback_t cb, void* param = nullptr); 
 
-  int deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
+  unsigned long deglitchPeriod, debouncePeriod, longPressPeriod, doubleClickPeriod;
 
   protected:
   bool process(); // not inline, used in child class
