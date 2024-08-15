@@ -1,0 +1,62 @@
+name: ci
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/arduino-lint-action@v1
+        with:
+          library-manager: submit
+          compliance: strict
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 2
+
+      - uses: jayllyz/clang-format-action@v1
+        # Default options
+        with:
+          check: false
+          style: file
+          extensions: cpp,h,hpp,c,ino
+          clang-version: latest
+
+      # commit the changes (if there are any)
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "clang-format ✅"
+          branch: ${{ github.head_ref }}
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [lint, format]
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: adafruit/ci-arduino
+          path: ci
+      - name: Install the prerequisites
+        run: bash ci/actions_install.sh
+      - name: Check for correct code formatting with clang-format
+        run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -r .
+        # Make sure to run the `clang-format -i src/*.h src/*.cpp` on the repo.
+        # To clean the Sources `clang-format -i examples/.../....ino`
+
+      - name: Test the code on supported platforms
+        run: python3 ci/build_platform.py main_platforms zero feather32u4 pico_rp2040

@@ -7,6 +7,7 @@
 #######################################
 
 Switch	KEYWORD1
+avdweb_Switch.h	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
