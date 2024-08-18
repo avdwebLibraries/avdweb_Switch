@@ -316,6 +316,7 @@ Several discrete signals (updated at poll times) are created. The raw signal is 
 ```
 
 ### Additional information
+
 See also: [A Guide To Debouncing](http://www.eng.utah.edu/~cs5780/debouncing.pdf)
 
 ### Developer Note
@@ -325,6 +326,22 @@ Please perform formatting before committing the code.
 ```sh
 clang-format -i src/*.* examples/**/*.ino
 ```
+
+## Credits
+
+Thanks to the contributors for making this library great
+
+- Sébastien Celles @scls19fr for helping with the Properties file.
+- Martin-Laclaustra @Martin-Laclaustra 
+	
+	- Remvoing `Streaming.h` dependency.
+	- Adding Callback function example.
+	- Updates to the documentation.
+	- Various Bug fixes to the Library and much more.
+
+- Geoff @GeoffState for helping with updating the README file.
+- Jeff Brown @j9brown for fixing Bugs and Warnings in the library.
+- Chris Pearson @themaninthesuitcase for fixes to the file names.
 
 ## License
 
