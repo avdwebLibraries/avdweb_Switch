@@ -331,17 +331,17 @@ clang-format -i src/*.* examples/**/*.ino
 
 Thanks to the contributors for making this library great
 
-- Sébastien Celles @scls19fr for helping with the Properties file.
-- Martin-Laclaustra @Martin-Laclaustra 
+- Sébastien Celles [@scls19fr](https://github.com/scls19fr) for helping with the Properties file.
+- Martin-Laclaustra [@Martin-Laclaustra](https://github.com/Martin-Laclaustra)
 	
 	- Remvoing `Streaming.h` dependency.
 	- Adding Callback function example.
 	- Updates to the documentation.
 	- Various Bug fixes to the Library and much more.
 
-- Geoff @GeoffState for helping with updating the README file.
-- Jeff Brown @j9brown for fixing Bugs and Warnings in the library.
-- Chris Pearson @themaninthesuitcase for fixes to the file names.
+- Geoff [@GeoffState](https://github.com/GeoffState) for helping with updating the README file.
+- Jeff Brown [@j9brown](https://github.com/j9brown) for fixing Bugs and Warnings in the library.
+- Chris Pearson [@themaninthesuitcase](https://github.com/themaninthesuitcase) for fixes to the file names.
 
 ## License
 
