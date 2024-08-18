@@ -22,6 +22,7 @@ void beepCallbackFunction(void *s) // optional
 {
   tone(3, 2400, 5); // is non-blocking
   // Serial.print("BeepCallback: "); Serial.println((char*)s);
+  (void)s; // Fix Unused warning
 }
 
 void setup() {
