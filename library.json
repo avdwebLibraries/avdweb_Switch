@@ -1,0 +1,33 @@
+{
+  "name": "Switch",
+  "version": "1.2.8",
+  "description": "Arduino library for deglitching and debouncing switches and buttons.",
+  "keywords": "Button, Debounce, input, glitch",
+  "authors": [
+    {
+    "name": "Albert van Dalen",
+    "url": "https://github.com/avandalen",
+    },
+    {
+    "name": "Abhijit Bose (aka. Boseji)",
+    "url": "https://github.com/boseji",
+    "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avdwebLibraries/avdweb_Switch.git"
+  },
+  "homepage": "http://www.avdweb.nl/arduino/hardware-interfacing/simple-switch-debouncer.html",
+  "export": {
+    "exclude": [
+      "extras",
+      "docs"
+    ]
+  },
+  "dependencies": {
+  },
+  "frameworks": "*",
+  "platforms": "*",
+  "examples": "examples/*/*/*.ino"
+}
