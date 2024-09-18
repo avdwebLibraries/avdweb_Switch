@@ -149,106 +149,109 @@
 
 #include "avdweb_Switch.h"
 
-switchCallback_t Switch::_beepAllCallback =
-    nullptr; // definition static function pointer with typedef
-void *Switch::_beepAllCallbackParam = nullptr;
+switchCallback_t Switch::_beepAllCallback = nullptr; // definition static function pointer with typedef
+void* Switch::_beepAllCallbackParam = nullptr;
 
 Switch::Switch(byte _pin, byte PinMode, bool polarity,
-               unsigned long debouncePeriod, unsigned long longPressPeriod,
-               unsigned long doubleClickPeriod, unsigned long deglitchPeriod)
-    : deglitchPeriod(deglitchPeriod), debouncePeriod(debouncePeriod),
-      longPressPeriod(longPressPeriod), doubleClickPeriod(doubleClickPeriod),
-      pin(_pin), polarity(polarity) {
-  pinMode(pin, PinMode);
-  switchedTime = millis();
-  debounced = digitalRead(pin);
-  singleClickDisable = true;
-  poll();
+    unsigned long debouncePeriod, unsigned long longPressPeriod,
+    unsigned long doubleClickPeriod, unsigned long deglitchPeriod)
+    : deglitchPeriod(deglitchPeriod)
+    , debouncePeriod(debouncePeriod)
+    , longPressPeriod(longPressPeriod)
+    , doubleClickPeriod(doubleClickPeriod)
+    , pin(_pin)
+    , polarity(polarity)
+{
+    pinMode(pin, PinMode);
+    switchedTime = millis();
+    debounced = digitalRead(pin);
+    singleClickDisable = true;
+    poll();
 }
 
-bool Switch::poll() {
-  input = digitalRead(pin);
-  ms = millis();
-  return process();
+bool Switch::poll()
+{
+    input = digitalRead(pin);
+    ms = millis();
+    return process();
 }
 
-bool Switch::process() {
-  deglitch();
-  debounce();
-  calcSingleClick();
-  calcDoubleClick();
-  calcLongPress();
-  if (switched()) {
-    switchedTime = ms; // stores last times for future rounds
+bool Switch::process()
+{
+    deglitch();
+    debounce();
+    calcSingleClick();
+    calcDoubleClick();
+    calcLongPress();
+    if (switched()) {
+        switchedTime = ms; // stores last times for future rounds
+        if (pushed()) {
+            if (_beepAllCallback)
+                _beepAllCallback(_beepAllCallbackParam);
+            pushedTime = ms;
+        } else {
+            releasedTime = ms;
+        }
+    }
+    triggerCallbacks();
+    return _switched;
+}
+
+void inline Switch::deglitch()
+{
+    if (input == lastInput)
+        equal = 1;
+    else {
+        equal = 0;
+        deglitchTime = ms;
+    }
+    if (equal && ((ms - deglitchTime) > deglitchPeriod)) // max 50ms, disable deglitch: 0ms
+    {
+        deglitched = input;
+        deglitchTime = ms;
+    }
+    lastInput = input;
+}
+
+void inline Switch::debounce()
+{
+    _switched = 0;
+    if ((deglitched != debounced) && ((ms - switchedTime) > debouncePeriod)) {
+        debounced = deglitched;
+        _switched = 1;
+    }
+}
+
+void inline Switch::calcSingleClick()
+{
+    _singleClick = false;
     if (pushed()) {
-      if (_beepAllCallback)
-        _beepAllCallback(_beepAllCallbackParam);
-      pushedTime = ms;
-    } else {
-      releasedTime = ms;
+        if ((ms - pushedTime) >= doubleClickPeriod) {
+            singleClickDisable = false; // resets when pushed not in second click of doubleclick
+        } else {
+            singleClickDisable = true; // silence single click in second cl. doublecl.
+        }
     }
-  }
-  triggerCallbacks();
-  return _switched;
-}
-
-void inline Switch::deglitch() {
-  if (input == lastInput)
-    equal = 1;
-  else {
-    equal = 0;
-    deglitchTime = ms;
-  }
-  if (equal &&
-      ((ms - deglitchTime) > deglitchPeriod)) // max 50ms, disable deglitch: 0ms
-  {
-    deglitched = input;
-    deglitchTime = ms;
-  }
-  lastInput = input;
-}
-
-void inline Switch::debounce() {
-  _switched = 0;
-  if ((deglitched != debounced) && ((ms - switchedTime) > debouncePeriod)) {
-    debounced = deglitched;
-    _switched = 1;
-  }
-}
-
-void inline Switch::calcSingleClick() {
-  _singleClick = false;
-  if (pushed()) {
-    if ((ms - pushedTime) >= doubleClickPeriod) {
-      singleClickDisable =
-          false; // resets when pushed not in second click of doubleclick
-    } else {
-      singleClickDisable = true; // silence single click in second cl. doublecl.
+    if (!singleClickDisable) {
+        _singleClick = !switched() && !on() && ((releasedTime - pushedTime) <= longPressPeriod) && ((ms - pushedTime) >= doubleClickPeriod); // true just one time between polls
+        singleClickDisable = _singleClick; // will be reset at next push
     }
-  }
-  if (!singleClickDisable) {
-    _singleClick = !switched() && !on() &&
-                   ((releasedTime - pushedTime) <= longPressPeriod) &&
-                   ((ms - pushedTime) >=
-                    doubleClickPeriod); // true just one time between polls
-    singleClickDisable = _singleClick;  // will be reset at next push
-  }
 }
 
-void inline Switch::calcDoubleClick() {
-  _doubleClick = pushed() && ((ms - pushedTime) < doubleClickPeriod);
+void inline Switch::calcDoubleClick()
+{
+    _doubleClick = pushed() && ((ms - pushedTime) < doubleClickPeriod);
 }
 
-void inline Switch::calcLongPress() {
-  _longPress = false;
-  if (released())
-    longPressDisable = false; // resets when released
-  if (!longPressDisable) {
-    _longPress = !switched() && on() &&
-                 ((ms - pushedTime) >
-                  longPressPeriod); // true just one time between polls
-    longPressDisable = _longPress;  // will be reset at next release
-  }
+void inline Switch::calcLongPress()
+{
+    _longPress = false;
+    if (released())
+        longPressDisable = false; // resets when released
+    if (!longPressDisable) {
+        _longPress = !switched() && on() && ((ms - pushedTime) > longPressPeriod); // true just one time between polls
+        longPressDisable = _longPress; // will be reset at next release
+    }
 }
 
 bool Switch::switched() { return _switched; }
@@ -265,57 +268,63 @@ bool Switch::doubleClick() { return _doubleClick; }
 
 bool Switch::singleClick() { return _singleClick; }
 
-void Switch::triggerCallbacks() {
-  if (_pushedCallback && pushed()) {
-    _pushedCallback(_pushedCallbackParam);
-  } else if (_releasedCallback && released()) {
-    _releasedCallback(_releasedCallbackParam);
-  }
+void Switch::triggerCallbacks()
+{
+    if (_pushedCallback && pushed()) {
+        _pushedCallback(_pushedCallbackParam);
+    } else if (_releasedCallback && released()) {
+        _releasedCallback(_releasedCallbackParam);
+    }
 
-  if (_longPressCallback && longPress()) {
-    _longPressCallback(_longPressCallbackParam);
-  }
+    if (_longPressCallback && longPress()) {
+        _longPressCallback(_longPressCallbackParam);
+    }
 
-  if (_doubleClickCallback && doubleClick()) {
-    _doubleClickCallback(_doubleClickCallbackParam);
-  }
+    if (_doubleClickCallback && doubleClick()) {
+        _doubleClickCallback(_doubleClickCallbackParam);
+    }
 
-  if (_singleClickCallback && singleClick()) {
-    _singleClickCallback(_singleClickCallbackParam);
-  }
+    if (_singleClickCallback && singleClick()) {
+        _singleClickCallback(_singleClickCallbackParam);
+    }
 }
 
-void Switch::setPushedCallback(switchCallback_t cb, void *param) {
-  _pushedCallback = cb; // Store the "pushed" callback function
-  _pushedCallbackParam = param;
+void Switch::setPushedCallback(switchCallback_t cb, void* param)
+{
+    _pushedCallback = cb; // Store the "pushed" callback function
+    _pushedCallbackParam = param;
 }
 
-void Switch::setReleasedCallback(switchCallback_t cb, void *param) {
-  _releasedCallback = cb; // Store the "released" callback function
-  _releasedCallbackParam = param;
+void Switch::setReleasedCallback(switchCallback_t cb, void* param)
+{
+    _releasedCallback = cb; // Store the "released" callback function
+    _releasedCallbackParam = param;
 }
 
-void Switch::setLongPressCallback(switchCallback_t cb, void *param) {
-  _longPressCallback = cb; // Store the "long press" callback function
-  _longPressCallbackParam = param;
+void Switch::setLongPressCallback(switchCallback_t cb, void* param)
+{
+    _longPressCallback = cb; // Store the "long press" callback function
+    _longPressCallbackParam = param;
 }
 
-void Switch::setDoubleClickCallback(switchCallback_t cb, void *param) {
-  _doubleClickCallback = cb; // Store the "double click" callback function
-  _doubleClickCallbackParam = param;
+void Switch::setDoubleClickCallback(switchCallback_t cb, void* param)
+{
+    _doubleClickCallback = cb; // Store the "double click" callback function
+    _doubleClickCallbackParam = param;
 }
 
-void Switch::setSingleClickCallback(switchCallback_t cb, void *param) {
-  _singleClickCallback = cb; // Store the "double click" callback function
-  _singleClickCallbackParam = param;
+void Switch::setSingleClickCallback(switchCallback_t cb, void* param)
+{
+    _singleClickCallback = cb; // Store the "double click" callback function
+    _singleClickCallbackParam = param;
 }
 
 // void Switch::setBeepAllCallback(void(*cb)(void*), void* param) static
 // function pointer without typedef
 void Switch::setBeepAllCallback(
     switchCallback_t cb,
-    void *param) // with static function pointer without typedef
+    void* param) // with static function pointer without typedef
 {
-  _beepAllCallback = cb; // Store the "beep" callback function
-  _beepAllCallbackParam = param;
+    _beepAllCallback = cb; // Store the "beep" callback function
+    _beepAllCallbackParam = param;
 }
