@@ -1,0 +1,4 @@
+# We'll use defaults from the LLVM style, but with 4 columns indentation.
+# Webkit is preference of Albert van Dalen
+BasedOnStyle: WebKit
+IndentWidth: 4
